@@ -1,0 +1,4 @@
+pika.c
+pika.py
+__pycache__
+*.out
