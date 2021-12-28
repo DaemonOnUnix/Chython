@@ -72,29 +72,49 @@ builtins_c_code = {
 }
 
 def builtin_write_mem_64() -> str:
-    header.add_builtin_function(builtins_c_code['write_mem_64'])
-    return f'write_mem_64'
+    if not state['has_written_mem_64']:
+        state['has_written_mem_64'] = True
+        header.add_builtin_function(builtins_c_code['write_mem_64'])
 
 def builtin_read_mem_64() -> str:
-    header.add_builtin_function(builtins_c_code['read_mem_64'])
+    if not state['has_read_mem_64']:
+        state['has_read_mem_64'] = True
+        header.add_builtin_function(builtins_c_code['read_mem_64'])
 
 def builtin_write_mem_32() -> str:
-    header.add_builtin_function(builtins_c_code['write_mem_32'])
+    if not state['has_written_mem_32']:
+        state['has_written_mem_32'] = True
+        header.add_builtin_function(builtins_c_code['write_mem_32'])
 
 def builtin_read_mem_32() -> str:
-    header.add_builtin_function(builtins_c_code['read_mem_32'])
+    if not state['has_read_mem_32']:
+        state['has_read_mem_32'] = True
+        header.add_builtin_function(builtins_c_code['read_mem_32'])
 
 def builtin_write_mem_16() -> str:
-    header.add_builtin_function(builtins_c_code['write_mem_16'])
+    if not state['has_written_mem_16']:
+        state['has_written_mem_16'] = True
+        header.add_builtin_function(builtins_c_code['write_mem_16'])
 
 def builtin_read_mem_16() -> str:
-    header.add_builtin_function(builtins_c_code['read_mem_16'])
+    if not state['has_read_mem_16']:
+        state['has_read_mem_16'] = True
+        header.add_builtin_function(builtins_c_code['read_mem_16'])
 
 def builtin_write_mem_8() -> str:
-    header.add_builtin_function(builtins_c_code['write_mem_8'])
+    if not state['has_written_mem_8']:
+        state['has_written_mem_8'] = True
+        header.add_builtin_function(builtins_c_code['write_mem_8'])
 
 def builtin_read_mem_8() -> str:
-    header.add_builtin_function(builtins_c_code['read_mem_8'])
+    if not state['has_read_mem_8']:
+        state['has_read_mem_8'] = True
+        header.add_builtin_function(builtins_c_code['read_mem_8'])
+
+def builtin_asm(asm_code: str) -> str:
+    return '''
+    asm volatile({});
+    '''.format(asm_code)
 
 builtins = {
     'write_mem_64' : (2, [int, int], builtin_write_mem_64),
@@ -104,5 +124,6 @@ builtins = {
     'write_mem_16' : (2, [int, int], builtin_write_mem_16),
     'read_mem_16' : (1, [int], builtin_read_mem_16),
     'write_mem_8' : (2, [int, int], builtin_write_mem_8),
-    'read_mem_8' : (1, [int], builtin_read_mem_8)
+    'read_mem_8' : (1, [int], builtin_read_mem_8),
 }
+
