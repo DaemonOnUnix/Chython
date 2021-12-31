@@ -41,12 +41,12 @@ BUILTIN_TOKENS = {
 #returns the python type of the expression
 #returns None if the type cannot be deduced
 def get_type_binop(node, vardict={}):
-    if node.__class__ == ast.BinOp:
-        left =  get_type(node.left, vardict)
-        right = get_type(node.right, vardict)
+    if node.__class__ == ast.BinOp or node.__class__ == ast.Compare:
+        left =  get_type(node.left, vardict) if node.__class__ == ast.BinOp else get_type(node.left, vardict)
+        right = get_type(node.right, vardict) if node.__class__ == ast.BinOp else get_type(node.comparators[0], vardict)
         if left is None or right is None:
             return None
-        if node.op.__class__ == ast.Add or node.op.__class__ == ast.Sub or node.op.__class__ == ast.Mult or node.op.__class__ == ast.Div or node.op.__class__ == ast.Mod or node.op.__class__ == ast.FloorDiv or node.op.__class__ == ast.BitOr or node.op.__class__ == ast.BitAnd or node.op.__class__ == ast.BitXor:
+        if node.__class__ == ast.BinOp and (node.op.__class__ == ast.Add or node.op.__class__ == ast.Sub or node.op.__class__ == ast.Mult or node.op.__class__ == ast.Div or node.op.__class__ == ast.Mod or node.op.__class__ == ast.FloorDiv or node.op.__class__ == ast.BitOr or node.op.__class__ == ast.BitAnd or node.op.__class__ == ast.BitXor):
             if left == 'int' and right == 'int':
                 return 'int'
             elif left == 'float' and right == 'float':
@@ -73,7 +73,7 @@ def get_type_binop(node, vardict={}):
                 return 'i64'
             else:
                 return None
-        elif node.op.__class__ == ast.LShift or node.op.__class__ == ast.RShift or node.op.__class__ == ast.BitOr or node.op.__class__ == ast.BitAnd or node.op.__class__ == ast.BitXor:
+        elif node.__class__ == ast.BinOp and (node.op.__class__ == ast.LShift or node.op.__class__ == ast.RShift or node.op.__class__ == ast.BitOr or node.op.__class__ == ast.BitAnd or node.op.__class__ == ast.BitXor):
             if left == 'int' and right == 'int':
                 return 'int'
             elif left == 'u16' and right == 'u16':
@@ -84,7 +84,7 @@ def get_type_binop(node, vardict={}):
                 return 'u64'
             else:
                 return None
-        elif node.op.__class__ == ast.Eq or node.op.__class__ == ast.NotEq or node.op.__class__ == ast.Lt or node.op.__class__ == ast.LtE or node.op.__class__ == ast.Gt or node.op.__class__ == ast.GtE:
+        elif node.__class__ == ast.Compare and (node.ops[0].__class__ == ast.Eq or node.ops[0].__class__ == ast.NotEq or node.ops[0].__class__ == ast.Lt or node.ops[0].__class__ == ast.LtE or node.ops[0].__class__ == ast.Gt or node.ops[0].__class__ == ast.GtE):
             if left == 'int' and right == 'int':
                 return 'bool'
             elif left == 'float' and right == 'float':
@@ -228,8 +228,8 @@ def get_type_call(node, vardict={}):
         l = type_of_call.split(' -> ')
         type_in_vardict = vardict[node.func.id].split(' -> ') if str(node.func.id) in vardict else None
         # print(vardict)
-        #if type_in_vardict is None:
-        #    return type_of_call
+        if type_in_vardict is None:
+           return l[-1]
         if len(l) != len(type_in_vardict):
             return None
         cur = 0
@@ -281,7 +281,7 @@ def get_type(node, vardict={}):
         return get_token_type(type(node.value))
     elif isinstance(node, ast.Name):
         return vardict[node.id] if node.id in vardict else None
-    elif isinstance(node, ast.BinOp):
+    elif isinstance(node, ast.BinOp) or isinstance(node, ast.Compare):
         return get_type_binop(node, vardict)
     elif isinstance(node, ast.UnaryOp):
         return get_type_unop(node, vardict)
@@ -405,9 +405,9 @@ if __name__=='__main__':
         ['bool', 'None', 'None'],
         ['None', 'None', 'None'],
         ['None', 'None', 'None'],
-        ['int -> int -> int -> float', 'float', 'float'],
-        ['int -> int -> int -> float', 'float', 'float'],
-        ['None', 'None', 'None'],
+        ['?0', '?0', 'float'],
+        ['float', 'float', 'float'],
+        ['?0', '?0', 'None'],
         ['NoneType', 'NoneType', 'NoneType'],
         ['list of int', 'list of int', 'list of int'],
         ['None', 'None', 'None'],
@@ -416,6 +416,7 @@ if __name__=='__main__':
     ]
 
     test(test_cases, envs, expected)
+
 
     #for test in test_cases:
     #    print('New test : ' + test)
