@@ -37,6 +37,11 @@ BUILTIN_TOKENS = {
 
 }
 
+def is_ambiguous(type_string : str):
+    if type_string is None:
+        return False
+    return type_string.startswith('?') and len(type_string) > 1
+
 #deduces the type of a python expression with a binary operator by looking at the AST
 #returns the python type of the expression
 #returns None if the type cannot be deduced
@@ -44,6 +49,18 @@ def get_type_binop(node, vardict={}):
     if node.__class__ == ast.BinOp or node.__class__ == ast.Compare:
         left =  get_type(node.left, vardict) if node.__class__ == ast.BinOp else get_type(node.left, vardict)
         right = get_type(node.right, vardict) if node.__class__ == ast.BinOp else get_type(node.comparators[0], vardict)
+        to_examine = right if is_ambiguous(left) else (left if is_ambiguous(right) else None)
+        if to_examine is not None:
+            if to_examine == None:
+                return None
+            if to_examine.startswith('?'):
+                return '?0'
+            if node.__class__ == ast.BinOp and (node.op.__class__ == ast.Add or node.op.__class__ == ast.Sub or node.op.__class__ == ast.Mult or node.op.__class__ == ast.Div or node.op.__class__ == ast.Mod or node.op.__class__ == ast.FloorDiv or node.op.__class__ == ast.BitOr or node.op.__class__ == ast.BitAnd or node.op.__class__ == ast.BitXor):
+                return to_examine
+            elif node.__class__ == ast.BinOp and (node.op.__class__ == ast.LShift or node.op.__class__ == ast.RShift or node.op.__class__ == ast.BitOr or node.op.__class__ == ast.BitAnd or node.op.__class__ == ast.BitXor):
+                return to_examine
+            elif node.__class__ == ast.Compare and (node.ops[0].__class__ == ast.Eq or node.ops[0].__class__ == ast.NotEq or node.ops[0].__class__ == ast.Lt or node.ops[0].__class__ == ast.LtE or node.ops[0].__class__ == ast.Gt or node.ops[0].__class__ == ast.GtE):
+                return 'bool'
         if left is None or right is None:
             return None
         if node.__class__ == ast.BinOp and (node.op.__class__ == ast.Add or node.op.__class__ == ast.Sub or node.op.__class__ == ast.Mult or node.op.__class__ == ast.Div or node.op.__class__ == ast.Mod or node.op.__class__ == ast.FloorDiv or node.op.__class__ == ast.BitOr or node.op.__class__ == ast.BitAnd or node.op.__class__ == ast.BitXor):
@@ -200,9 +217,6 @@ def get_type_call_helper(node, vardict={}):
             return to_return + ' -> ' + f'?{unknown_number}'
         return None
     return None
-
-def is_ambiguous(type_string : str):
-    return type_string.startswith('?') and len(type_string) > 1
 
 #an ambigous type is of the form '?id'
 #current_ambiguous is the id to the current ambiguous type to generate
