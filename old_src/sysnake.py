@@ -1,4 +1,4 @@
-
+#!/usr/bin/python3
 import ast
 import sys
 import os
@@ -23,7 +23,7 @@ def main():
     file_path = sys.argv[1]
     ast_tree = get_ast_tree(file_path)
     sys_snake_code = codegen.codegen(ast_tree, True)
-    write_to_file(file_path.replace('.py', '.c') , header.get_builtin_header() + '\n' + header.get_builtin_functions() + '\n' + sys_snake_code)
+    write_to_file(file_path.replace('.py', '.py.c') , header.get_builtin_header() + '\n' + header.get_builtin_functions() + '\n' + sys_snake_code)
 
 if __name__ == '__main__':
     main()

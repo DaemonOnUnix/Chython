@@ -3,53 +3,46 @@ import equivalences.equivalences as equivalences
 import sysnake_builtins.sysnake_builtins as builtins
 
 def codegen_op_from_node(op):
-    if op.__class__ == ast.Add:
-        return '+'
-    elif op.__class__ == ast.Sub:
-        return '-'
-    elif op.__class__ == ast.Mult:
-        return '*'
-    elif op.__class__ == ast.Div:
-        return '/'
-    elif op.__class__ == ast.Mod:
-        return '%'
-    elif op.__class__ == ast.Pow:
-        raise Exception('Pow not implemented')
-    elif op.__class__ == ast.LShift:
-        return '<<'
-    elif op.__class__ == ast.RShift:
-        return '>>'
-    elif op.__class__ == ast.BitOr:
-        return '|'
-    elif op.__class__ == ast.BitXor:
-        return '^'
-    elif op.__class__ == ast.BitAnd:
-        return '&'
-    elif op.__class__ == ast.FloorDiv:
-        return '/'
-    elif op.__class__ == ast.Invert:
-        return '~'
-    elif op.__class__ == ast.Not:
-        return '!'
+    Corr = {
+        ast.Add: '+',
+        ast.Sub: '-',
+        ast.Mult: '*',
+        ast.Div: '/',
+        ast.Mod: '%',
+        ast.LShift: '<<',
+        ast.RShift: '>>',
+        ast.BitOr: '|',
+        ast.BitXor: '^',
+        ast.BitAnd: '&',
+        ast.FloorDiv: '/',
+        ast.Invert: '~',
+        ast.Not: '!'
+    }
+    # Check existence
+    if op.__class__ in Corr:
+        return Corr[op.__class__]
     raise Exception('Unknown op: ' + str(op))
 
-#descends int the value of slice and returns the type of the slice with the depth
 def get_slice_type(slice, depth=0):
-    if slice.__class__ == ast.Index:
-        return get_slice_type(slice.value, depth+1)
-    elif slice.__class__ == ast.Slice:
-        return get_slice_type(slice.lower, depth+1)
-    elif slice.__class__ == ast.ExtSlice:
-        return get_slice_type(slice.dims[0], depth+1)
-    elif slice.__class__ == ast.Ellipsis:
-        return (depth, 'list')
-    elif slice.__class__ == ast.Tuple:
-        return (depth, 'tuple')
-    elif slice.__class__ == ast.Name:
-        return (depth, slice.id)
-    elif slice.__class__ == ast.Subscript:
-        return get_slice_type(slice.slice, depth)
-    raise Exception('Unknown slice type: ' + str(slice))
+    """
+    Descends into the value of a slice and returns the type of the slice along with its depth.
+    """
+    actions = {
+        ast.Index: lambda s: get_slice_type(s.value, depth + 1),
+        ast.Slice: lambda s: get_slice_type(s.lower, depth + 1),
+        ast.ExtSlice: lambda s: get_slice_type(s.dims[0], depth + 1),
+        ast.Ellipsis: lambda s: (depth, 'list'),
+        ast.Tuple: lambda s: (depth, 'tuple'),
+        ast.Name: lambda s: (depth, s.id),
+        ast.Subscript: lambda s: get_slice_type(s.slice, depth)
+    }
+    
+    action = actions.get(slice.__class__)
+    if action:
+        return action(slice)
+    
+    raise Exception(f'Unknown slice type: {slice}')
+
 
 #checks that all list levels have the same length
 #e.g. [1,2,3] -> [3]
@@ -68,7 +61,6 @@ def check_list_lengths(a):
         if val != check_list_lengths(L[i]):
             return None
     return [len(L)] + val
-
 
 def codegen_subscript(node, name="", value=None):
     if node.value.id == 'list':
