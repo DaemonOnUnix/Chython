@@ -71,6 +71,11 @@ class VariableInstanciation:
             self.vars.append(Variable(ast_lhs[0], ast_rhs))
         elif ast_rhs.__class__ == ast.Constant:
             self.vars.append(Variable(ast_lhs[0], ast_rhs))
+        elif ast_rhs.__class__ == ast.UnaryOp:
+            self.vars.append(Variable(ast_lhs[0], ast_rhs))
+        elif ast_rhs.__class__ == ast.Subscript:
+            self.vars.append(Variable(ast_lhs[0], ast_rhs))
+
         else:
             # Trust me I'm an engineer
             raise TypeError(f"Expected ast.Name or ast.Constant, got {ast_rhs.__class__}")

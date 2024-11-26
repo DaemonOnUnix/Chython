@@ -6,6 +6,8 @@ from compiler.variabledef import VariableInstanciation, Variable
 from compiler.constants import Constant
 from compiler.id import Id
 from compiler.binop import BinOp
+from compiler.unaryop import UnOp
+from compiler.indexing import Subscript
 from compiler.call import Call
 
 from compiler.static_transforms import apply_transfos
@@ -36,6 +38,8 @@ TYPE_CORRELATION = {
     ast.Name: LiftingElement(ast.Name, Id),
     ast.Return: LiftingElement(ast.Return, Return),
     ast.BinOp: LiftingElement(ast.BinOp, BinOp),
+    ast.UnaryOp: LiftingElement(ast.UnaryOp, UnOp),
+    ast.Subscript: LiftingElement(ast.Subscript, Subscript),
     ast.Call: LiftingElement(ast.Call, Call),
     ast.Pass: LiftingElement(ast.Pass, Pass)
 }
