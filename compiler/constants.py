@@ -13,5 +13,4 @@ class Constant:
         return f'Constant({self.value}, {self.type})'
     
     def typeof(self, ctx):
-        print(f'{self.type.__class__} {self.type.elems}')
         return self.type
