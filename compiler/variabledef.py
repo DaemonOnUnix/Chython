@@ -26,7 +26,8 @@ class Variable:
             raise Exception(f"Type mismatch for {self.name}, expected {type_announced}, got {type_value}")
 
         type_to_add = type_announced if type_announced else type_value
-        ctx.add_element(compiler.context.ContextElement(self.name, type_to_add))
+        if not in_ctx:
+            ctx.add_element(compiler.context.ContextElement(self.name, type_to_add))
 
         return type_value
 

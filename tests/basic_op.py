@@ -3,5 +3,5 @@
 #    return num/3 + r64(offset)
 
 c: i32 = 1
-c: i32 = 2
+c = 2
 a, b = c, 5 + 0xdeadbeef
