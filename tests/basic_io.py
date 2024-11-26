@@ -8,8 +8,6 @@ class Test:
         A, B = 52, 30
         return a + b * c
 
-#suce = 0xb8000
-#*suce='A'
 # A, B = C
 
 # D, E = 500, 'test'

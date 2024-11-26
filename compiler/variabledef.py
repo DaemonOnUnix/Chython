@@ -6,7 +6,7 @@ import compiler.id
 
 class Variable:
     def __init__(self, name, value, _type = None):
-        self.name = compiler.id.Id(name)
+        self.name = [compiler.id.Id.from_str(x) for x in name.id.split('->')]
         self.value = compiler.parser.parse(value)
         self._type = _type
         if not self._type:
