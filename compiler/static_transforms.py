@@ -31,6 +31,7 @@ class StaticTransformUnaryOp(ast.NodeTransformer):
                 value = node.operand.value
             )
             return ast.copy_location(new_node, node)
+        return node
 
 TRANSFORM_LIST = [
     StaticTransform,
