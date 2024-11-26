@@ -25,3 +25,10 @@ class BinOp:
     
     def __repr__(self):
         return f'BinOp({self.left}, {self.op}, {self.right})'
+    
+    # XXX Handle integers AND Floats
+    def typeof(self, ctx):
+        tl, tr = self.left.typeof(ctx), self.right.typeof(ctx)
+        if not (tl.is_num() and tr.is_num()):
+            raise TypeError(f"Expected numbers, got {tl} and {tr}")
+        return tl

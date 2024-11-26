@@ -9,6 +9,9 @@ class FunArg:
     
     def __repr__(self):
         return f'FunArg({self.name}, {self.type})'
+    
+    def get_type(self, ctx):
+        return self.type
 
 class Return:
     def __init__(self, ast_node):
@@ -18,6 +21,9 @@ class Return:
     
     def __repr__(self):
         return f'Return({self.value})'
+    
+    def get_type(self, ctx):
+        return 'unit'
 
 class Pass:
     def __init__(self, ast_node):
@@ -26,6 +32,9 @@ class Pass:
     
     def __repr__(self):
         return 'Pass()'
+    
+    def get_type(self):
+        return unit
 
 class Function:
     def __init__(self, astNode):

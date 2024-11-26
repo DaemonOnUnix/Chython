@@ -61,22 +61,59 @@ class TypeUnit:
     def __repr__(self):
         return str(self)
     
+    def __eq__(self, o):
+        return self.name == o.name or ('Integral' in self.props and self.props == o.props)
+    
+    def __ne__(self, o):
+        return not self == o
+    
     @staticmethod
     def constant_type(atom):
         if type(atom.value) == int:
-            return TypeUnit('i64')
+            return AtomicType('i64')
         if type(atom.value) == float:
-            return TypeUnit('f64')
+            return AtomicType('f64')
         if type(atom.value) == str:
-            return TypeUnit('str')
+            return AtomicType('str')
         if type(atom.value) == bytes:
-            return TypeUnit('bytes')
+            return AtomicType('bytes')
     
 class Type:
     def __init__(self, types_str):
+        # Avoid confusion by passing an str
+        if type(types_str) == str:
+            types_str = [types_str]
         self.elems = []
         for t in types_str:
             self.elems.append(TypeUnit(t))
     
     def __str__(self):
-        return '->'.join(self.elems)
+        return '->'.join([str(x) for x in self.elems])
+    
+    def is_compound(self):
+        return len(self.elems) > 1
+    
+    def is_num(self):
+        return not self.is_compound() and 'Integral' in self.elems[0].props
+    
+    def __len__(self):
+        return len(self.elems)
+
+    def __eq__(self, o):
+        if len(self) != len(o):
+            return False
+        for i in range(len(self)):
+            if self.elems[i] != o.elems[i]:
+                return False
+        return True
+    
+    def __ne__(self, o):
+        return not (self == o)
+
+class AtomicType(Type):
+    def __init__(self, type_str):
+        if not type_str in TypeUnit.Primitives:
+            raise ValueError(f"Type {type_str} is not a primitive type")
+        super().__init__([type_str])
+
+UNIT = Type(['unit'])

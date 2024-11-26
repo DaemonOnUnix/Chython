@@ -16,7 +16,6 @@ class Typer:
 
 functions_to_type = [
     Typer(compiler.constants.Constant, TypeUnit.constant_type, do_nothing),
-    Typer(compiler.id.Id, do_later, do_nothing)
 ]
 
 def typeof(ast_node):

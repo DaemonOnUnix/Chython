@@ -47,5 +47,5 @@ def parse(ast_node):
         if ast_node.__class__ == k:
             constructed = TYPE_CORRELATION[k](ast_node)
     if not constructed:
-        raise TypeError(f"Unexpected ast node: {ast_node.__class__}")
+        raise TypeError(f"Unexpected ast node: {ast_node.__class__} -> {ast.dump(ast_node)}")
     return constructed
