@@ -53,6 +53,8 @@ class Function:
         self.name = compiler.id.Id.from_str(astNode.name)
         self.args = [FunArg(arg.arg, arg.annotation.id if arg.annotation else None) for arg in astNode.args.args]
         self.body = [compiler.parser.parse(x) for x in astNode.body]
+        if not astNode.returns:
+            raise TypeError(f"Function {self.name} has no return type hint")
         self.return_type = astNode.returns.id
     
     def __repr__(self):
