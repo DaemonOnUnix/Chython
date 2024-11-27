@@ -46,6 +46,7 @@ class VariableInstanciation:
             self.vars = [Variable(ast_lhs, ast_rhs, type_hint)]
             return
         ast_lhs = astNode.targets
+        # print(ast.dump(astNode))
         ast_rhs = astNode.value
         self.vars = []
         lhs = []
@@ -66,19 +67,12 @@ class VariableInstanciation:
         # Tuple deconstruction
         elif ast_rhs.__class__ == ast.Name and ast_lhs.__class__ == ast.Tuple:
             raise Exception('Tuple deconstruction not implemented')
-        # XXX Not strict enough
-        elif ast_rhs.__class__ == ast.Name:
-            self.vars.append(Variable(ast_lhs[0], ast_rhs))
-        elif ast_rhs.__class__ == ast.Constant:
-            self.vars.append(Variable(ast_lhs[0], ast_rhs))
-        elif ast_rhs.__class__ == ast.UnaryOp:
-            self.vars.append(Variable(ast_lhs[0], ast_rhs))
-        elif ast_rhs.__class__ == ast.Subscript:
-            self.vars.append(Variable(ast_lhs[0], ast_rhs))
 
-        else:
-            # Trust me I'm an engineer
-            raise TypeError(f"Expected ast.Name or ast.Constant, got {ast_rhs.__class__}")
+        AUTHORIZED = [ast.Name, ast.Constant, ast.Call, ast.BinOp, ast.UnaryOp]
+        if ast_rhs.__class__ in AUTHORIZED:
+            self.vars.append(Variable(ast_lhs[0], ast_rhs))
+            return
+        raise TypeError(f"Expected ast.Name or ast.Constant, got {ast_rhs.__class__}")
     
     def get_vars(self):
         return self.vars

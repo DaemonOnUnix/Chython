@@ -16,9 +16,10 @@ class ContextElement:
         return self.type
 
 class Scope:
-    def __init__(self, name):
+    def __init__(self, name, return_type = None):
         self.elements = []
         self.name = name
+        self.return_type = return_type
     
     def add_element(self, element):
         self.elements.append(element)
@@ -29,8 +30,11 @@ class Scope:
                 return element
         return None
     
+    def set_return_type(self, rt):
+        self.return_type = rt
+
     def __repr__(self):
-        return f'Scope({self.name}, {self.elements})'
+        return f'Scope({self.name}, {self.return_type}, {self.elements})'
 
 class Context:
     def __init__(self):
@@ -58,6 +62,11 @@ class Context:
                 return element
         return None
     
+    def get_type_to_return(self):
+        for scope in reversed(self.scopes):
+            if scope.return_type:
+                return scope.return_type
+
     def __repr__(self):
         return f'Context({self.scopes})'
 
