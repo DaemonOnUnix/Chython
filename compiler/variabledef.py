@@ -68,7 +68,7 @@ class VariableInstanciation:
         elif ast_rhs.__class__ == ast.Name and ast_lhs.__class__ == ast.Tuple:
             raise Exception('Tuple deconstruction not implemented')
 
-        AUTHORIZED = [ast.Name, ast.Constant, ast.Call, ast.BinOp, ast.UnaryOp]
+        AUTHORIZED = [ast.Name, ast.Constant, ast.Call, ast.BinOp, ast.UnaryOp, ast.Subscript]
         if ast_rhs.__class__ in AUTHORIZED:
             self.vars.append(Variable(ast_lhs[0], ast_rhs))
             return
