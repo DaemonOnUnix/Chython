@@ -21,7 +21,5 @@ class Subscript:
     
     # XXX Handle integers AND Floats
     def typeof(self, ctx):
-        # raise TypeError(f"Not implemented")
+        raise Exception(f"Subscripts are not implemented yet")
         
-        # Need to return type of self.value type
-        return 'None'
