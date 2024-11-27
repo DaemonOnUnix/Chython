@@ -5,7 +5,7 @@ d = -a
 j = +a
 toto = 4
 
-if a != 2 < 10:
+if a != 2:
     b = 2
 elif c is not 1 :
     d = 5
