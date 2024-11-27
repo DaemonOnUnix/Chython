@@ -1,5 +1,6 @@
 import ast
 import compiler.parser
+import compiler.type_system
 
 OP_LIST = {
     ast.Invert: '~',
@@ -18,7 +19,8 @@ class UnOp:
     def __repr__(self):
         return f'UnOp({self.op}, {self.operand})'
     
-    # XXX Handle integers AND Floats
     def typeof(self, ctx):
-        # raise TypeError(f"Not implemented")
-        return 'None'
+        t = self.operand.typeof(ctx)
+        if not t.is_num():
+            raise TypeError(f"Expected number, got {t}")
+        return t
