@@ -1,4 +1,5 @@
 import ast
+import compiler.type_system
 
 class ImportUnit:
     def __init__(self, name, asname = None):
@@ -22,4 +23,7 @@ class Import:
                 self.names.append(ImportUnit(alias.name))
 
     def __repr__(self):
-        return f'Import({self.names})'        
+        return f'Import({self.names})'
+
+    def typeof(self, ctx):
+        return compiler.type_system.UNIT
