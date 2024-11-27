@@ -7,7 +7,9 @@ from compiler.constants import Constant
 from compiler.id import Id
 from compiler.binop import BinOp
 from compiler.unaryop import UnOp
+from compiler.control_flow import If
 from compiler.indexing import Subscript
+from compiler.compare import Compare
 from compiler.call import Call
 
 from compiler.static_transforms import apply_transfos
@@ -40,6 +42,8 @@ TYPE_CORRELATION = {
     ast.BinOp: LiftingElement(ast.BinOp, BinOp),
     ast.UnaryOp: LiftingElement(ast.UnaryOp, UnOp),
     ast.Subscript: LiftingElement(ast.Subscript, Subscript),
+    ast.If: LiftingElement(ast.If, If),
+    ast.Compare: LiftingElement(ast.Compare, Compare),
     ast.Call: LiftingElement(ast.Call, Call),
     ast.Pass: LiftingElement(ast.Pass, Pass)
 }
