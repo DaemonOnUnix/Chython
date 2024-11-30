@@ -81,6 +81,12 @@ class Function:
         
         print(ctx.current_scope)
         ctx.pop_scope()
-        # Add the function in the scope
+        
+        T = []
+        for arg in self.args:
+            T.append(str(arg.typeof(ctx)))
+        T.append(str(self.return_type))
+
+        ctx.add_element(compiler.context.ContextElement(self.name, compiler.type_system.Type(T)))
 
         return compiler.type_system.UNIT
