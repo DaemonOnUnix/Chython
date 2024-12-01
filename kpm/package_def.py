@@ -1,8 +1,9 @@
 import toml
 
 class PkgInfo:
-    def __init__(self, name, version, description, author, license):
+    def __init__(self, name, pkg_type, version, description, author, license):
         self.name = name
+        self.type = pkg_type
         self.version = version
         self.description = description
         self.author = author
@@ -26,6 +27,7 @@ class PkgInfo:
     def to_dict(self):
         return {
             'name': self.name,
+            'type': self.type,
             'version': self.version,
             'description': self.description,
             'author': self.author,
@@ -34,7 +36,10 @@ class PkgInfo:
 
     @classmethod
     def from_dict(cls, data):
-        return cls(data['name'], data['version'], data['description'], data['author'], data['license'])
+        try:
+            return cls(data['name'], data['type'], data['version'], data['description'], data['author'], data['license'])
+        except Exception:
+            print(f'Corrupted Project data: {data}')
 
     @classmethod
     def from_toml(cls, json_str):
