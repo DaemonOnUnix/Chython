@@ -8,7 +8,7 @@ class Variable:
     def __init__(self, name, value, _type = None):
         #self.name = [compiler.id.Id.from_str(x) for x in name.id.split('->')]
         self.name = compiler.id.Id(name)
-        self.value = compiler.parser.parse(value)
+        self.value = compiler.parser.parse(value) if value else None
         self._type = _type
 
     def __repr__(self):
